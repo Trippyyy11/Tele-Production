@@ -26,7 +26,7 @@ function Dashboard() {
     const expiredCount = tasks.filter(t => t.status === 'expired').length
 
     return (
-        <div className="space-y-8 animate-in">
+        <div className="space-y-4 animate-in">
             {/* Hero Section */}
             <header className="relative py-12 px-8 rounded-3xl bg-gradient-to-br from-primary-600 to-primary-800 overflow-hidden shadow-xl shadow-primary-500/20">
                 <div className="relative z-10 max-w-2xl">
@@ -42,7 +42,7 @@ function Dashboard() {
             </header>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     icon={<Users className="w-6 h-6" />}
                     label="Total Folders"
@@ -70,7 +70,7 @@ function Dashboard() {
             </div>
 
             {/* Scheduled & Expiry Tasks */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <TaskFlashCard
                     icon={<Calendar className="w-6 h-6" />}
                     label="Scheduled Tasks"
@@ -90,8 +90,8 @@ function Dashboard() {
             </div>
 
             {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className={`${['admin', 'moderator'].includes(user?.role) ? 'lg:col-span-2' : 'lg:col-span-3'} bg-white rounded-3xl p-6 card-shadow border border-gray-100`}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className={`${['admin', 'moderator'].includes(user?.role) ? 'lg:col-span-2' : 'lg:col-span-3'} bg-white rounded-3xl p-4 card-shadow border border-gray-100`}>
                     <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
                         <Zap className="w-5 h-5 text-primary-500" />
                         Recent Broadcasts
@@ -126,7 +126,7 @@ function Dashboard() {
 
                 {/* Quick Actions */}
                 {['admin', 'moderator'].includes(user?.role) && (
-                    <div className="bg-white rounded-3xl p-6 card-shadow border border-gray-100 h-fit">
+                    <div className="bg-white rounded-3xl p-4 card-shadow border border-gray-100 h-fit">
                         <h2 className="text-xl font-bold mb-6 text-gray-900">Quick Actions</h2>
                         <div className="space-y-3">
                             <QuickAction href="/folders" label="Create Folder" />
@@ -143,7 +143,7 @@ function Dashboard() {
 
 function StatCard({ icon, label, value, color }) {
     return (
-        <div className="bg-white rounded-2xl p-6 card-shadow border border-gray-100 transition-transform hover:-translate-y-1 duration-300">
+        <div className="bg-white rounded-2xl p-4 card-shadow border border-gray-100 transition-transform hover:-translate-y-1 duration-300">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${color}`}>
                 {icon}
             </div>
@@ -155,7 +155,7 @@ function StatCard({ icon, label, value, color }) {
 
 function TaskFlashCard({ icon, label, value, subValue, color, tasks }) {
     return (
-        <div className="bg-white rounded-2xl p-6 card-shadow border border-gray-100 transition-transform hover:-translate-y-1 duration-300">
+        <div className="bg-white rounded-2xl p-4 card-shadow border border-gray-100 transition-transform hover:-translate-y-1 duration-300">
             <div className="flex items-center justify-between mb-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
                     {icon}

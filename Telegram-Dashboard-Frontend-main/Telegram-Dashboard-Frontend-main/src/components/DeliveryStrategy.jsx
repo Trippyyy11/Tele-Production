@@ -16,6 +16,10 @@ export function DeliveryStrategy({
     setExpiryHours,
     orderedChannels,
     setOrderedChannels,
+    globalPinDelay,
+    setGlobalPinDelay,
+    globalPinExpiry,
+    setGlobalPinExpiry,
     showPriorityList = true
 }) {
     return (
@@ -61,6 +65,31 @@ export function DeliveryStrategy({
                             onChange={(e) => setDelayMinutes(parseInt(e.target.value) || 1)}
                             className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-primary-500 focus:outline-none"
                         />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Pin Delay (Minutes)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="0 (No Pin)"
+                                value={globalPinDelay || ''}
+                                onChange={(e) => setGlobalPinDelay(parseInt(e.target.value) || 0)}
+                                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-primary-500 focus:outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Unpin After (Minutes)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="0 (Never)"
+                                value={globalPinExpiry || ''}
+                                onChange={(e) => setGlobalPinExpiry(parseInt(e.target.value) || 0)}
+                                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-primary-500 focus:outline-none"
+                            />
+                        </div>
                     </div>
                     {showPriorityList && orderedChannels && (
                         <div className="border-t border-gray-100 pt-4">

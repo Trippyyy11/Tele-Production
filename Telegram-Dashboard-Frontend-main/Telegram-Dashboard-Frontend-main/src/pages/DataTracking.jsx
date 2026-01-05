@@ -206,7 +206,7 @@ function DataTracking() {
     ]
 
     return (
-        <div className="space-y-8 animate-in p-2">
+        <div className="space-y-4 animate-in p-2">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div className="relative">
                     <h1 className="text-4xl font-black mb-2 tracking-tight text-gray-900">Data Tracking</h1>
@@ -313,14 +313,14 @@ function DataTracking() {
             </header>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat, i) => (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
                         key={i}
-                        className="bg-white rounded-2xl p-6 relative overflow-hidden group border border-gray-100 card-shadow"
+                        className="bg-white rounded-2xl p-4 relative overflow-hidden group border border-gray-100 card-shadow"
                     >
                         <div className="flex justify-between items-start mb-4">
                             <div className={`p-3 rounded-xl ${stat.color.replace('text', 'bg')}/10`}>
@@ -339,7 +339,7 @@ function DataTracking() {
 
             {/* Detailed Tracking Table Section */}
             <section className="bg-white rounded-2xl border border-gray-100 overflow-hidden card-shadow">
-                <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/50">
+                <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/50">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center border border-primary-100">
                             <TrendingUp className="w-5 h-5 text-primary-500" />
@@ -355,7 +355,7 @@ function DataTracking() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="text-xs uppercase tracking-widest text-gray-500 font-bold bg-gray-50">
-                                <th className="px-6 py-4 border-b border-gray-100 w-12 text-center">#</th>
+                                <th className="px-4 py-4 border-b border-gray-100 w-12 text-center">#</th>
                                 <th className="px-4 py-4 border-b border-gray-100 min-w-[120px]">Task ID</th>
                                 <th className="px-4 py-4 border-b border-gray-100 min-w-[150px]">Task Name</th>
                                 <th className="px-4 py-4 border-b border-gray-100 min-w-[150px]">Chat ID</th>
@@ -375,7 +375,7 @@ function DataTracking() {
                             {flattenedData.length > 0 ? (
                                 flattenedData.map((row, idx) => (
                                     <tr key={`${row.taskId}-${row.chatId}-${row.messageId}`} className="hover:bg-gray-50 transition-colors group cursor-default">
-                                        <td className="px-6 py-4 text-gray-400 font-mono text-xs text-center">{idx}</td>
+                                        <td className="px-4 py-4 text-gray-400 font-mono text-xs text-center">{idx}</td>
                                         <td className="px-4 py-4">
                                             <div className="flex items-center gap-2">
                                                 <Hash className="w-3 h-3 text-gray-400" />
@@ -442,7 +442,7 @@ function DataTracking() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="13" className="px-6 py-20 text-center">
+                                    <td colSpan="13" className="px-4 py-20 text-center">
                                         <div className="flex flex-col items-center justify-center grayscale opacity-50">
                                             <Shield className="w-12 h-12 mb-4 text-gray-300" />
                                             <p className="text-lg font-bold text-gray-500">No tracking data available</p>

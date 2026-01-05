@@ -37,6 +37,7 @@ export function SortableQuizItem({ quiz, index, updateQuiz, removeQuiz, duplicat
                 <div className="flex-1" />
                 <div className="flex gap-2">
                     <button
+                        type="button"
                         onClick={() => duplicateQuiz(index)}
                         className="p-2 text-gray-400 hover:text-primary-500 transition-colors"
                         title="Duplicate"
@@ -44,6 +45,7 @@ export function SortableQuizItem({ quiz, index, updateQuiz, removeQuiz, duplicat
                         <Wand2 className="w-4 h-4" />
                     </button>
                     <button
+                        type="button"
                         onClick={() => removeQuiz(index)}
                         className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         title="Delete"
@@ -85,38 +87,47 @@ export function SortableQuizItem({ quiz, index, updateQuiz, removeQuiz, duplicat
 
                 {/* Options List */}
                 <div className="pl-8 space-y-2">
-                    {quiz.options.map((opt, oIdx) => (
-                        <div key={oIdx} className="flex items-center gap-2 group/opt">
-                            <button
-                                onClick={() => updateQuiz(index, 'correctOption', oIdx)}
-                                className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${quiz.correctOption === oIdx ? 'bg-green-500 text-white shadow-md shadow-green-500/20' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}`}
-                            >
-                                {String.fromCharCode(65 + oIdx)}
-                            </button>
-                            <div className="flex-1">
-                                <input
-                                    value={opt}
-                                    onChange={(e) => updateOption(index, oIdx, e.target.value)}
-                                    className="w-full bg-transparent border border-gray-200 rounded-lg px-3 py-2 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 focus:outline-none text-sm text-gray-700 transition-all placeholder:text-gray-400/50"
-                                    maxLength={100}
-                                    placeholder={`Option ${String.fromCharCode(65 + oIdx)} (Max 100 chars)`}
-                                />
-                                <p className={`text-[10px] text-right ${getCounterColor(opt.length, 100)}`}>
-                                    {opt.length}/100
-                                </p>
-                            </div>
-                            {quiz.options.length > 2 && (
+                    {quiz.options.map((opt, oIdx) => {
+                        const isCorrect = quiz.correctOption === oIdx;
+                        return (
+                            <div key={oIdx} className="flex items-center gap-2 group/opt">
                                 <button
-                                    onClick={() => removeOption(index, oIdx)}
-                                    className="text-gray-400 hover:text-red-500 opacity-0 group-hover/opt:opacity-100 transition-opacity"
+                                    type="button"
+                                    onClick={() => updateQuiz(index, 'correctOption', oIdx)}
+                                    className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${isCorrect ? 'bg-green-500 text-white shadow-md shadow-green-500/20' : 'bg-gray-200 text-gray-500 hover:bg-gray-300'}`}
                                 >
-                                    <Trash2 className="w-3 h-3" />
+                                    {String.fromCharCode(65 + oIdx)}
                                 </button>
-                            )}
-                        </div>
-                    ))}
+                                <div className="flex-1">
+                                    <input
+                                        value={opt}
+                                        onChange={(e) => updateOption(index, oIdx, e.target.value)}
+                                        className={`w-full bg-transparent border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 text-sm text-gray-700 transition-all placeholder:text-gray-400/50 ${isCorrect
+                                            ? 'border-green-500 bg-green-50/50 focus:border-green-600 focus:ring-green-200'
+                                            : 'border-gray-200 focus:border-primary-500 focus:ring-primary-100'
+                                            }`}
+                                        maxLength={100}
+                                        placeholder={`Option ${String.fromCharCode(65 + oIdx)} (Max 100 chars)`}
+                                    />
+                                    <p className={`text-[10px] text-right ${getCounterColor(opt.length, 100)}`}>
+                                        {opt.length}/100
+                                    </p>
+                                </div>
+                                {quiz.options.length > 2 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => removeOption(index, oIdx)}
+                                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover/opt:opacity-100 transition-opacity"
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
                     {quiz.options.length < 10 && (
                         <button
+                            type="button"
                             onClick={() => addOption(index)}
                             className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1 mt-2 font-bold transition-colors"
                         >

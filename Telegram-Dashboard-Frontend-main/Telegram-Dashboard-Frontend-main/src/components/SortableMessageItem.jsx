@@ -81,6 +81,10 @@ export function SortableMessageItem({ message, index, updateMessage, removeMessa
         updateMessage(message.id, 'media', newFiles);
     };
 
+    const handlePinChange = (e) => {
+        updateMessage(message.id, 'pin', e.target.checked);
+    };
+
     return (
         <div
             ref={setNodeRef}
@@ -153,6 +157,49 @@ export function SortableMessageItem({ message, index, updateMessage, removeMessa
                         mediaFiles={mediaFiles}
                         setMediaFiles={handleMediaReorder}
                     />
+                )}
+            </div>
+
+            {/* Pinning Options */}
+            <div className="pt-2 border-t border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        id={`pin-${message.id}`}
+                        checked={message.pin || false}
+                        onChange={handlePinChange}
+                        className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                    />
+                    <label htmlFor={`pin-${message.id}`} className="text-sm font-bold text-gray-700 select-none cursor-pointer">
+                        Pin Message
+                    </label>
+                </div>
+
+                {message.pin && (
+                    <>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 mb-1">Delay Pin (mins)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="0"
+                                value={message.pinDelay || ''}
+                                onChange={(e) => updateMessage(message.id, 'pinDelay', parseInt(e.target.value) || 0)}
+                                className="w-full px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-sm focus:border-primary-500 focus:outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 mb-1">Unpin After (mins)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="Never"
+                                value={message.pinExpiry || ''}
+                                onChange={(e) => updateMessage(message.id, 'pinExpiry', parseInt(e.target.value) || 0)}
+                                className="w-full px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-sm focus:border-primary-500 focus:outline-none"
+                            />
+                        </div>
+                    </>
                 )}
             </div>
         </div>

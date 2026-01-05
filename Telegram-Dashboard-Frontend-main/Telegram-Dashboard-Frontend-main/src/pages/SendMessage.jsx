@@ -31,10 +31,14 @@ function SendMessage() {
     // Ordered Channels for Priority
     const [orderedChannels, setOrderedChannels] = useState([])
 
+    // Global Pin Settings (Delay Strategy)
+    const [globalPinDelay, setGlobalPinDelay] = useState(0)
+    const [globalPinExpiry, setGlobalPinExpiry] = useState(0)
+
     // Feedback State
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState(null)
-    const [showPreview, setShowPreview] = useState(true)
+    const [showPreview, setShowPreview] = useState(false)
 
     // --- Data Fetching ---
     const { data: folders = [] } = useQuery({
@@ -124,9 +128,30 @@ function SendMessage() {
         e.preventDefault()
         console.log('🚀 SUBMITTING CAMPAIGN:', { taskName, messagesCount: messages.length, selectedCount: selectedEntityIds.length })
 
-        if (!taskName.trim()) { alert('Please enter a campaign name'); return; }
-        if (messages.length === 0) { alert('Please add at least one message'); return; }
-        if (selectedEntityIds.length === 0) { alert('Please select at least one target channel/group'); return; }
+        if (!taskName.trim()) {
+            setError('Please enter a campaign name');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+        if (messages.length === 0) {
+            setError('Please add at least one message');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+
+        // Ensure at least one message has content
+        const hasContent = messages.some(m => m.content?.trim() || m.media);
+        if (!hasContent) {
+            setError('Please add content (text or media) to your message');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+
+        if (selectedEntityIds.length === 0) {
+            setError('Please select at least one target channel/group');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
 
         const formData = new FormData()
         formData.append('name', taskName.trim())
@@ -135,7 +160,11 @@ function SendMessage() {
         // Content
         const messagePayload = messages.map(m => ({
             id: m.id,
-            text: m.content
+            text: m.content,
+            // If global pin settings are used (in delay mode), override message settings
+            pin: (schedulingMode === 'delay' && globalPinDelay > 0) ? true : m.pin,
+            pinDelay: (schedulingMode === 'delay' && globalPinDelay > 0) ? globalPinDelay : m.pinDelay,
+            pinExpiry: (schedulingMode === 'delay' && globalPinExpiry > 0) ? globalPinExpiry : m.pinExpiry
         }));
 
         formData.append('content', JSON.stringify({
@@ -192,7 +221,7 @@ function SendMessage() {
     }
 
     return (
-        <div className="space-y-8 animate-in pb-20">
+        <div className="space-y-4 animate-in pb-12">
             <header>
                 <h1 className="text-3xl font-extrabold mb-2 text-gray-900">Send Broadcast</h1>
                 <p className="text-gray-500">Create multi-message campaigns with advanced scheduling.</p>
@@ -212,12 +241,12 @@ function SendMessage() {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
 
                 {/* Left Column: Content Editor (7 cols) */}
-                <div className="xl:col-span-7 space-y-6">
+                <div className="xl:col-span-7 space-y-4">
                     {/* Editor */}
-                    <div className="bg-white rounded-2xl p-6 card-shadow border border-gray-100 space-y-6">
+                    <div className="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-4">
                         <div className="flex items-center justify-center gap-2 pb-4 border-b border-gray-100">
                             <Send className="w-5 h-5 text-primary-500" />
                             <h2 className="text-lg font-bold text-gray-900">Campaign Content</h2>
@@ -240,7 +269,7 @@ function SendMessage() {
                 </div>
 
                 {/* Right Column: Preview, Targeting & Scheduling (5 cols) */}
-                <div className="xl:col-span-5 space-y-6">
+                <div className="xl:col-span-5 space-y-4">
 
                     {/* 1. Live Preview - Moved here */}
                     <div className="bg-gray-100 rounded-2xl overflow-hidden card-shadow border border-gray-200 transition-all duration-300">
@@ -261,7 +290,7 @@ function SendMessage() {
                     </div>
 
                     {/* 2. Targeting Strategies */}
-                    <div className="bg-white rounded-2xl p-6 card-shadow border border-gray-100 space-y-4">
+                    <div className="bg-white rounded-2xl p-4 card-shadow border border-gray-100 space-y-4">
                         <div className="flex items-center justify-center gap-2 pb-4 border-b border-gray-100">
                             <FolderKanban className="w-5 h-5 text-primary-500" />
                             <h2 className="text-lg font-bold text-gray-900">Target Audience</h2>
@@ -293,6 +322,10 @@ function SendMessage() {
                         setExpiryHours={setExpiryHours}
                         orderedChannels={orderedChannels}
                         setOrderedChannels={setOrderedChannels}
+                        globalPinDelay={globalPinDelay}
+                        setGlobalPinDelay={setGlobalPinDelay}
+                        globalPinExpiry={globalPinExpiry}
+                        setGlobalPinExpiry={setGlobalPinExpiry}
                     />
 
                     <button

@@ -139,12 +139,12 @@ function FolderManager() {
 
     return (
 
-        <div className="space-y-8 animate-in">
+        <div className="space-y-4 animate-in">
             {/* View Folder Modal */}
             {viewingFolder && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-2xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900">{viewingFolder.name}</h3>
                                 <p className="text-sm text-gray-500">{viewingFolder.description || 'No description'}</p>
@@ -199,7 +199,7 @@ function FolderManager() {
             </header>
 
             {/* Create/Edit Folder Form */}
-            <form onSubmit={handleCreateOrUpdate} className={`bg-white rounded-2xl p-6 space-y-4 card-shadow border transition-all duration-300 ${isEditing ? 'border-primary-500 ring-2 ring-primary-100' : 'border-gray-100'}`}>
+            <form onSubmit={handleCreateOrUpdate} className={`bg-white rounded-2xl p-4 space-y-4 card-shadow border transition-all duration-300 ${isEditing ? 'border-primary-500 ring-2 ring-primary-100' : 'border-gray-100'}`}>
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-bold flex items-center gap-2 text-gray-900">
                         {isEditing ? (
@@ -464,7 +464,7 @@ function FolderManager() {
                             <div
                                 key={folder._id}
                                 onDoubleClick={() => startViewing(folder)}
-                                className={`bg-white rounded-2xl p-5 card-shadow border transition-all group hover:-translate-y-1 cursor-pointer ${editingFolderId === folder._id ? 'border-primary-500 ring-1 ring-primary-500' : 'border-gray-100 hover:border-primary-200'}`}
+                                className={`bg-white rounded-2xl p-4 card-shadow border transition-all group hover:-translate-y-1 cursor-pointer ${editingFolderId === folder._id ? 'border-primary-500 ring-1 ring-primary-500' : 'border-gray-100 hover:border-primary-200'}`}
                                 title="Double-click to view contents"
                             >
                                 <div className="flex justify-between items-start mb-4">

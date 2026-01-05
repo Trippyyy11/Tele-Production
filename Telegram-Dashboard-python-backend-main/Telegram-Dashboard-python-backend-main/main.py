@@ -600,6 +600,101 @@ async def get_channel_stats(data: dict = Body(...), request: Request = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/messages/pin")
+async def pin_message(data: dict = Body(...), request: Request = None):
+    """
+    Pin a message in a chat.
+    Input: {"chatId": "...", "messageId": 123}
+    """
+    user_id = request.headers.get("x-user-id")
+    print(f"DEBUG PIN REQUEST: User={user_id} Headers={request.headers}", flush=True)
+    print(f"DEBUG PIN DATA: {data}", flush=True)
+    
+    if not user_id:
+        print("❌ Missing x-user-id header", flush=True)
+        raise HTTPException(status_code=400, detail="x-user-id header required")
+
+    client = await get_or_init_client(user_id)
+
+    if not await client.is_user_authorized():
+        print("❌ User not authorized", flush=True)
+        raise HTTPException(status_code=401, detail="Userbot not authorized")
+
+    chat_id = data.get("chatId")
+    message_id = data.get("messageId")
+    
+    print(f"DEBUG PIN PARSED: chat_id={chat_id} ({type(chat_id)}), message_id={message_id} ({type(message_id)})", flush=True)
+
+    if not chat_id or not message_id:
+        print("❌ Missing chatId or messageId", flush=True)
+        raise HTTPException(status_code=400, detail="Missing chatId or messageId")
+
+    try:
+        # Resolve peer
+        peer = None
+        try:
+            peer = int(chat_id)
+        except ValueError:
+            peer = chat_id
+        
+        # Resolve entity specifically (fixes "Could not find input entity" errors)
+        try:
+           entity = await client.get_input_entity(peer)
+        except:
+           # Fallback fetch
+           await client.get_dialogs(limit=None)
+           entity = await client.get_input_entity(peer)
+
+        # Telethon Pin - fetch message first to ensure it's valid
+        messages = await client.get_messages(entity, ids=[int(message_id)])
+        if not messages or not messages[0]:
+             # Try raw pin (blind) if fetch fails
+             await client.pin_message(entity, int(message_id), notify=True)
+        else:
+             await messages[0].pin(notify=True)
+
+        print(f"✅ Pinned message {message_id} in {chat_id}")
+        return {"status": "success", "message": "Message pinned"}
+    except Exception as e:
+        print(f"❌ Failed to pin message {message_id} in {chat_id}: {e}")
+        return {"status": "failed", "error": str(e)}
+
+
+@app.post("/messages/unpin")
+async def unpin_message(data: dict = Body(...), request: Request = None):
+    """
+    Unpin a message in a chat.
+    Input: {"chatId": "...", "messageId": 123}
+    """
+    user_id = get_user_id_from_request(request)
+    client = await get_or_init_client(user_id)
+
+    if not await client.is_user_authorized():
+        raise HTTPException(status_code=401, detail="Userbot not authorized")
+
+    chat_id = data.get("chatId")
+    message_id = data.get("messageId")
+
+    if not chat_id or not message_id:
+        raise HTTPException(status_code=400, detail="Missing chatId or messageId")
+
+    try:
+        # Resolve peer
+        peer = None
+        try:
+            peer = int(chat_id)
+        except ValueError:
+            peer = chat_id
+        
+        # Telethon Unpin
+        await client.unpin_message(peer, int(message_id))
+        print(f"✅ Unpinned message {message_id} in {chat_id}")
+        return {"status": "success", "message": "Message unpinned"}
+    except Exception as e:
+        print(f"❌ Failed to unpin message {message_id} in {chat_id}: {e}")
+        return {"status": "failed", "error": str(e)}
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PYTHON_PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

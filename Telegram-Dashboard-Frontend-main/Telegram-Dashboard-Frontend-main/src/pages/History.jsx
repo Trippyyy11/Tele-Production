@@ -138,7 +138,7 @@ function History() {
     }
 
     return (
-        <div className="space-y-8 animate-in">
+        <div className="space-y-4 animate-in">
             <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4">
                 <div>
                     <h1 className="text-3xl font-extrabold mb-2 text-gray-900">Broadcast History</h1>
@@ -180,6 +180,7 @@ function History() {
                         >
                             <option value="">Status</option>
                             <option value="completed">Completed</option>
+                            <option value="partially completed">Partially Completed</option>
                             <option value="processing">Processing</option>
                             <option value="pending">Pending</option>
                             <option value="failed">Failed</option>
@@ -222,13 +223,13 @@ function History() {
                 <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Task</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Recipients</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Scheduled Time</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Sent By</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Task</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Recipients</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Scheduled Time</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Sent By</th>
+                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -247,7 +248,7 @@ function History() {
                         ) : (
                             displayTasks.map((task) => (
                                 <tr key={task.uniqueKey} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-3">
                                         <div>
                                             <p className="font-bold text-gray-900">{task.name}</p>
                                             <div className="flex items-center gap-2 mt-1">
@@ -262,13 +263,13 @@ function History() {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-3">
                                         <span className="px-2 py-1 rounded-md bg-gray-100 text-gray-600 text-xs font-bold capitalize border border-gray-200">
                                             {task.type}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-bold text-gray-900">{task.recipientCount}</td>
-                                    <td className="px-6 py-4 text-gray-500 text-sm">
+                                    <td className="px-4 py-3 font-bold text-gray-900">{task.recipientCount}</td>
+                                    <td className="px-4 py-3 text-gray-500 text-sm">
                                         <div className="flex flex-col">
                                             <span className="font-bold text-gray-700">
                                                 {new Date(task.scheduledAt || task.createdAt).toLocaleDateString()}
@@ -278,19 +279,19 @@ function History() {
                                             </span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
                                             <User className="w-4 h-4 text-gray-400" />
                                             <span className="text-sm font-medium text-gray-700">{task.createdByUsername || '-'}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-3">
                                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(task.status)}`}>
                                             {getStatusIcon(task.status)}
                                             {task.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="px-4 py-3 text-right">
                                         {task.status === 'failed' && task.createdByUsername === user?.username && (
                                             <button
                                                 onClick={() => handleRetry(task.taskId)}

@@ -176,6 +176,7 @@ function TelegramPreview({ content, type = 'message', className }) {
             <div className="flex items-center justify-between mb-6 bg-gray-50 p-1.5 rounded-2xl border border-gray-200">
                 <div className="flex p-1 bg-gray-200/50 rounded-xl gap-1">
                     <button
+                        type="button"
                         onClick={() => { setIsMobile(true); setViewMode('app'); }}
                         className={clsx("flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-bold", (isMobile && viewMode === 'app') ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700")}
                     >
@@ -183,6 +184,7 @@ function TelegramPreview({ content, type = 'message', className }) {
                         <span className="hidden sm:inline">Mobile</span>
                     </button>
                     <button
+                        type="button"
                         onClick={() => { setIsMobile(false); setViewMode('app'); }}
                         className={clsx("flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-bold", (!isMobile && viewMode === 'app') ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700")}
                     >
@@ -190,6 +192,7 @@ function TelegramPreview({ content, type = 'message', className }) {
                         <span className="hidden sm:inline">Desktop</span>
                     </button>
                     <button
+                        type="button"
                         onClick={() => setViewMode('notification')}
                         className={clsx("flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-bold", viewMode === 'notification' ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700")}
                     >
@@ -200,6 +203,7 @@ function TelegramPreview({ content, type = 'message', className }) {
 
                 {viewMode === 'app' && (
                     <button
+                        type="button"
                         onClick={() => setIsDark(!isDark)}
                         className={clsx("p-2 rounded-xl transition-all border", isDark ? "bg-gray-800 text-yellow-400 border-gray-700" : "bg-white text-gray-500 border-gray-200 hover:border-blue-200 hover:text-blue-500")}
                     >

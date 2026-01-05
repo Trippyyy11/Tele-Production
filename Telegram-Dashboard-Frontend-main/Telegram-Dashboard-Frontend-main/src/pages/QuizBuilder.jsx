@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getFolders, scheduleTask, getEntities } from '../services/api'
-import { HelpCircle, Wand2, Plus, Trash2, CheckCircle2, Loader2, Upload, Calendar, Eye, FolderKanban } from 'lucide-react'
+import { HelpCircle, Wand2, Plus, Trash2, CheckCircle2, Loader2, Upload, Calendar, Eye, FolderKanban, AlertCircle } from 'lucide-react'
 import { wordFileParser } from '../utils/wordFileParser'
 import mammoth from 'mammoth'
 import { FolderTreeSelector } from '../components/FolderTreeSelector'
@@ -11,7 +11,7 @@ import { DeliveryStrategy } from '../components/DeliveryStrategy'
 
 function QuizBuilder() {
     const [mode, setMode] = useState('auto')
-    const [showPreview, setShowPreview] = useState(true)
+    const [showPreview, setShowPreview] = useState(false)
 
     // Tasks List State
     const [quizzes, setQuizzes] = useState([])
@@ -35,6 +35,7 @@ function QuizBuilder() {
     const [rawText, setRawText] = useState('')
     const [success, setSuccess] = useState(false)
     const [isParsing, setIsParsing] = useState(false)
+    const [error, setError] = useState(null)
 
     const { data: folders = [] } = useQuery({
         queryKey: ['folders'],
@@ -365,25 +366,53 @@ function QuizBuilder() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         console.log('DEBUG: handleSubmit called');
-        alert('DEBUG: handleSubmit called');
-        if (!taskName.trim()) { alert('Please enter a task name prefix'); return; }
-        if (quizzes.length === 0) { alert('Please add at least one quiz question'); return; }
-        if (selectedEntityIds.length === 0) { alert('Please select at least one target channel/group'); return; }
 
-        // Validate Limits
+        if (!taskName.trim()) {
+            setError('Please enter a task name prefix');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+        if (quizzes.length === 0) {
+            setError('Please add at least one quiz question');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+        if (selectedEntityIds.length === 0) {
+            setError('Please select at least one target channel/group');
+            setTimeout(() => setError(null), 8000);
+            return;
+        }
+
+        // Validate Limits & Content
         for (let i = 0; i < quizzes.length; i++) {
             const q = quizzes[i];
+
+            if (!q.question.trim()) {
+                setError(`Error in Question ${i + 1}: Question text cannot be empty.`);
+                setTimeout(() => setError(null), 8000);
+                return;
+            }
             if (q.question.length > 300) {
-                alert(`Error in Question ${i + 1}: Question length (${q.question.length}) exceeds 300 characters.`);
+                setError(`Error in Question ${i + 1}: Question length (${q.question.length}) exceeds 300 characters.`);
+                setTimeout(() => setError(null), 8000);
                 return;
             }
+
             if (q.explanation && q.explanation.length > 200) {
-                alert(`Error in Question ${i + 1}: Explanation length (${q.explanation.length}) exceeds 200 characters.`);
+                setError(`Error in Question ${i + 1}: Explanation length (${q.explanation.length}) exceeds 200 characters.`);
+                setTimeout(() => setError(null), 8000);
                 return;
             }
+
             for (let j = 0; j < q.options.length; j++) {
+                if (!q.options[j].trim()) {
+                    setError(`Error in Question ${i + 1}, Option ${String.fromCharCode(65 + j)}: Option text cannot be empty.`);
+                    setTimeout(() => setError(null), 8000);
+                    return;
+                }
                 if (q.options[j].length > 100) {
-                    alert(`Error in Question ${i + 1}, Option ${String.fromCharCode(65 + j)}: Length (${q.options[j].length}) exceeds 100 characters.`);
+                    setError(`Error in Question ${i + 1}, Option ${String.fromCharCode(65 + j)}: Length (${q.options[j].length}) exceeds 100 characters.`);
+                    setTimeout(() => setError(null), 8000);
                     return;
                 }
             }
@@ -467,14 +496,14 @@ function QuizBuilder() {
                 setTaskName('')
                 setRawText('')
                 setMode('auto')
-            }, 3000)
+            }, 8000)
         } catch (err) {
             console.error(err)
         }
     }
 
     return (
-        <div className="space-y-8 animate-in pb-20">
+        <div className="space-y-4 animate-in pb-12">
             <header className="flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-extrabold mb-2 text-gray-900">Quiz Builder</h1>
@@ -503,10 +532,17 @@ function QuizBuilder() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-                <div className="xl:col-span-7 space-y-6">
+            {error && (
+                <div className="p-4 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5" />
+                    <span className="font-bold">{error}</span>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+                <div className="xl:col-span-7 space-y-4">
                     {mode === 'auto' ? (
-                        <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-6 space-y-4">
+                        <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-4 space-y-4">
                             <h2 className="text-lg font-bold flex items-center gap-2 text-gray-900"><Wand2 className="w-5 h-5 text-blue-500" /> Auto Parser</h2>
                             <textarea
                                 placeholder="Paste multiple questions here..."
@@ -544,10 +580,10 @@ function QuizBuilder() {
                 </div>
 
                 {/* Right Column: Settings, Targeting, Preview (5 cols) */}
-                <div className="xl:col-span-5 space-y-6 sticky top-6">
+                <div className="xl:col-span-5 space-y-4 sticky top-6">
 
                     {/* 1. Task Details (Moved to Top) */}
-                    <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-6 space-y-4">
+                    <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-4 space-y-4">
                         <h2 className="font-bold text-gray-900 leading-none">Task Details</h2>
 
                         <div>
@@ -619,7 +655,7 @@ function QuizBuilder() {
                         showPriorityList={true}
                     />
 
-                    <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-6">
+                    <div className="bg-white border border-gray-100 card-shadow rounded-2xl p-4">
                         <div className="flex items-center justify-center gap-2 pb-4 border-b border-gray-100 mb-4">
                             <FolderKanban className="w-5 h-5 text-primary-500" />
                             <h2 className="text-lg font-bold text-gray-900">Target Audience</h2>
